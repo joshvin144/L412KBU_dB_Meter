@@ -11,6 +11,10 @@
 #include "assert.h"
 /* END INCLUDES */
 
+/* BEGIN SYSTEM SPECIFIC DEFINITIONS */
+#define HEARTBEAT_HALF_PERIOD_MS 500
+/* END SYSTEM TASK SPECIFIC DEFINITIONS */
+
 /* TASK DEFINITIONS BEGIN */
 void vSystemTask(void* pvParams)
 {
@@ -25,6 +29,10 @@ void vSystemTask(void* pvParams)
 	for(;;)
 	{
 		/* Write application specific code, here */
+
+		// Heartbeat LED
+		// HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
+		// HAL_Delay(HEARTBEAT_HALF_PERIOD_MS);
 	}
 
 	vTaskDelete(NULL);
