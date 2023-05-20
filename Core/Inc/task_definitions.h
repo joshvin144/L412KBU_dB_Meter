@@ -58,10 +58,6 @@ StaticTask_t system_task_buffer;
 TaskHandle_t systemTaskHandle = NULL;
 /* END TASK HANDLE DECLARATIONS */
 
-/* BEGIN TASK CREATION RETURN VARIABLES */
-BaseType_t systemTaskCreationStatus = pdPASS;
-/* END TASK CREATIONS RETURN VARIABLES */
-
 /* BEGIN TASK BLOCK DECLARATIONS */
 task_block_t system_task_block;
 /* END TASK BLOCK DECLARATIONS */

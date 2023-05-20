@@ -6,8 +6,10 @@
  */
 
 /* BEGIN INCLUDES */
+#include "stm32l4xx_hal.h"
 #include "FreeRTOS.h"
 #include "task_definitions.h"
+#include "stdbool.h"
 #include "assert.h"
 /* END INCLUDES */
 
@@ -31,8 +33,8 @@ void vSystemTask(void* pvParams)
 		/* Write application specific code, here */
 
 		// Heartbeat LED
-		// HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
-		// HAL_Delay(HEARTBEAT_HALF_PERIOD_MS);
+		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
+		HAL_Delay(HEARTBEAT_HALF_PERIOD_MS);
 	}
 
 	vTaskDelete(NULL);
@@ -57,14 +59,13 @@ void initialize_system_task_block(void)
 void create_system_task(void)
 {
 	initialize_system_task_block();
-	systemTaskCreationStatus = xTaskCreateStatic(system_task_block.p_task_function,
+	systemTaskHandle = xTaskCreateStatic(system_task_block.p_task_function,
 			  system_task_block.task_name,
 			  system_task_block.stack_depth,
 			  system_task_block.p_params,
 			  system_task_block.priority,
 			  system_task_block.p_stack_buffer,
 			  system_task_block.p_task_buffer);
-	assert(pdPASS == systemTaskCreationStatus);
 }
 
 /* END TASK CREATION */
