@@ -9,6 +9,7 @@
 #include "stm32l4xx_hal.h"
 #include "FreeRTOS.h"
 #include "task_definitions.h"
+#include "system_task.h"
 #include "stdbool.h"
 #include "assert.h"
 /* END INCLUDES */
