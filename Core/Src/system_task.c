@@ -34,8 +34,8 @@ void vSystemTask(void* pvParams)
 		/* Write application specific code, here */
 
 		// Heartbeat LED
-		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
-		HAL_Delay(HEARTBEAT_HALF_PERIOD_MS);
+//		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
+//		HAL_Delay(HEARTBEAT_HALF_PERIOD_MS);
 	}
 
 	vTaskDelete(NULL);

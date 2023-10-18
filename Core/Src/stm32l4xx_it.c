@@ -23,17 +23,27 @@
 #include "stm32l4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "cmsis_gcc.h"
 /* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN TD */
-
-/* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define EXTENDED_FRAME_SIZE 71
+#define BASIC_FRAME_SIZE 7
 /* USER CODE END PD */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN TD */
+typedef struct{
+	uint32_t* msp;
+	uint32_t* psp;
+	uint32_t* sp;
+
+	uint32_t handler_contents[EXTENDED_FRAME_SIZE];
+	uint32_t trace_contents[BASIC_FRAME_SIZE];
+}context_t;
+
+/* USER CODE END TD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
@@ -53,6 +63,19 @@
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+/**
+\brief Get Link Register
+\details Returns the current value of the Link Register (LR).
+\return LR Register value
+*/
+__STATIC_FORCEINLINE uint32_t __get_LR(void)
+{
+  register uint32_t result;
+  __ASM volatile ("MOV %0, LR\n" : "=r" (result) );
+  return(result);
+}
+
+static context_t handler_context;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -86,6 +109,27 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
+  handler_context.msp = (uint32_t*) __get_MSP();
+  handler_context.psp = (uint32_t*) __get_PSP();
+  handler_context.handler_contents[14] = __get_LR();
+
+  switch(handler_context.handler_contents[14])
+  {
+      case 0xfffffffd:
+    	  handler_context.sp = handler_context.psp;
+    	  break;
+      case 0xffffffed:
+    	  handler_context.sp = handler_context.msp;
+    	  break;
+      default:
+    	  handler_context.sp = handler_context.msp;
+    	  break;
+  }
+
+  for (uint8_t i = 0; i < BASIC_FRAME_SIZE; i++)
+  {
+	  handler_context.trace_contents[i] = *(handler_context.sp++);
+  }
 
   /* USER CODE END HardFault_IRQn 0 */
   while (1)

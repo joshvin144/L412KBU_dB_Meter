@@ -7,6 +7,7 @@
 
 /* BEGIN INCLUDES */
 #include "stm32l4xx_hal.h"
+#include "cmsis_gcc.h"
 #include "FreeRTOS.h"
 #include "task_definitions.h"
 #include "auxiliary_task.h"
@@ -14,28 +15,23 @@
 #include "assert.h"
 /* END INCLUDES */
 
-// For reading the Link Register (LR)
-#define __ASM __asm /*!< asm keyword for GNU Compiler */
-#define __INLINE inline /*!< inline keyword for GNU Compiler */
-#define __STATIC_INLINE static inline
+// What to do after obtaining the last known return address
+// Run the following to convert the address to a line number
+// /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.macos64_1.5.0.202011040924/tools/bin/arm-none-eabi-addr2line -e L412KBU_dB_Meter.elf 0x8000511
+// /Users/jvincent/STM32CubeIDE/workspace_1.6.1/L412KBU_dB_Meter/Debug/../Core/Src/auxiliary_task.c:83 (discriminator 1)
 
 // For forcing a Hard Fault
 #define RESERVED_ADDRESS 0x08020001
 
-// For tracking the number of recursive calls to ouroboris
-static uint32_t entry_number;
+/* BEGIN TEST FUNCTION DEFINITIONS */
 
-/**
-\brief Get Link Register
-\details Returns the current value of the Link Register (LR).
-\return LR Register value
-*/
-__attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_LR(void)
+void illegal_memory_access_attempt(void)
 {
-  register uint32_t result;
-
-  __ASM volatile ("MOV %0, LR\n" : "=r" (result) );
-  return(result);
+	// Pointer to reserved memory address
+	uint32_t* p_reserved_address;
+	p_reserved_address = RESERVED_ADDRESS;
+	// Attempt to read; a Hard Fault will be caused here
+	uint32_t contents = *p_reserved_address;
 }
 
 /*
@@ -43,27 +39,12 @@ __attribute__( ( always_inline ) ) __STATIC_INLINE uint32_t __get_LR(void)
  * The ouroboris function recursively calls itself without a base case
  * It will consume memory on the stack
  */
-void ouroboris(uint32_t* p_entry_number)
+void ouroboris(void)
 {
-	uint32_t entry_number = *p_entry_number;
-	(*p_entry_number)++;
-	ouroboris(p_entry_number);
+	ouroboris();
 }
 
-void illegal_memory_access_attempt(void)
-{
-	// Store the lasst known return address
-	uint32_t last_known_return_address = __get_LR();
-	// Pointer to reserved memory address
-	uint32_t* p_reserved_address;
-	p_reserved_address = RESERVED_ADDRESS;
-	// Attempt to read; a Hard Fault will be caused here
-	uint32_t contents = *p_reserved_address;
-	// Modify contents
-	contents++;
-	// Attempt to write
-	*p_reserved_address = contents;
-}
+/* END TEST FUNCTION DEFINITIONS */
 
 /* TASK DEFINITIONS BEGIN */
 void vAuxiliaryTask(void* pvParams)
@@ -73,15 +54,14 @@ void vAuxiliaryTask(void* pvParams)
 	/* Create any mutexes, semaphores, gueues, or other intertask communication mechanisms, here */
 
 	/* Write task specific code, here */
-	// entry_number = 0;
-	illegal_memory_access_attempt();
+	// illegal_memory_access_attempt();
 
 	/* Note that the following segment consists of code that the RTOS cycles through. */
 
 	for(;;)
 	{
 		/* Write application specific code, here */
-		// ouroboris(&entry_number);
+		// ouroboris();
 	}
 
 	vTaskDelete(NULL);

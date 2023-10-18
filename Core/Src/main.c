@@ -23,6 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "timer_task_user.h"
 #include "system_task_user.h"
 #include "auxiliary_task_user.h"
 #include "error.h"
@@ -136,8 +137,10 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  create_timer_task();
   create_system_task();
   create_auxiliary_task();
+  start_timer_task();
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
