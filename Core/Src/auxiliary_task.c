@@ -17,8 +17,15 @@
 
 // What to do after obtaining the last known return address
 // Run the following to convert the address to a line number
-// /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.macos64_1.5.0.202011040924/tools/bin/arm-none-eabi-addr2line -e L412KBU_dB_Meter.elf 0x8000511
+// arm-none-eabi-addr2line -e L412KBU_dB_Meter.elf 0x8000511
 // /Users/jvincent/STM32CubeIDE/workspace_1.6.1/L412KBU_dB_Meter/Debug/../Core/Src/auxiliary_task.c:83 (discriminator 1)
+// If there are problems running arm-none-abi-addr2line, make sure that the following is included in the PATH:
+// /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.9-2020-q2-update.macos64_1.5.0.202011040924/tools/bin/
+// For programming through CubeProgrammer, make sure the following is included in the PATH:
+// /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.macos64_1.6.0.202101291314/tools/bin
+// For debugging through gdb, make sure the following is included in the PATH:
+// /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.stlink-gdb-server.macos64_1.6.0.202101291314/tools/bin/native/mac_x64
+// /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.stlink-gdb-server.macos64_1.6.0.202101291314/tools/bin
 
 // For forcing a Hard Fault
 #define RESERVED_ADDRESS 0x08020001
